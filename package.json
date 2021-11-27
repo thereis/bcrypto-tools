@@ -1,0 +1,26 @@
+{
+  "name": "wsexa",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev:ts": "tsnd --respawn src/index.ts",
+    "tsnd": "tsnd --respawn"
+  },
+  "dependencies": {
+    "@types/node": "^16.11.10",
+    "@types/web3": "^1.2.2",
+    "@types/ws": "^8.2.0",
+    "axios": "^0.24.0",
+    "bignumber.js": "^9.0.1",
+    "bn.js": "^5.2.0",
+    "nodemon": "^2.0.15",
+    "socket.io-client": "^4.4.0",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.5.2",
+    "web3": "^1.6.1",
+    "web3-core": "^1.6.1",
+    "ws": "^8.3.0"
+  }
+}
