@@ -1,5 +1,8 @@
+import BN from "bn.js";
 import Web3 from "web3";
 import core from "web3-core";
+
+const { toBN, hexToBytes } = Web3.utils;
 
 // console.log(Web3.utils.hexToString());
 
@@ -34,8 +37,13 @@ console.log("b: ", b);
 let c = new Uint8Array(encode("Unity WebGL"));
 console.log("c: ", c);
 
-const buff = new ArrayBuffer(55);
+const buff = Buffer.from(JSON.stringify({ api: "1.7.15", cl: "Unity WebGL" }));
+console.log("buff: ", buff);
 
-console.log("buff: ", Buffer.concat([new Uint8Array(encode("")), a, b, c]));
-// const aaa = Buffer.from().toString("hex");
-// console.log("aaa: ", aaa);
+console.log(
+  toBN("80003412000300016302000001610300000001701200020003").toBuffer()
+);
+
+//(a & 2047) + 79861
+let teste = toBN(877).and(toBN(2047));
+console.log("teste: ", teste.toNumber());

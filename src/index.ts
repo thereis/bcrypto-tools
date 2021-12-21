@@ -1,7 +1,7 @@
 import WS from "ws";
 import axios from "axios";
 import { getAccountAddress, signRequest } from "./web3";
-import { getAccountHeroes, getAccountNFTS } from "./nft";
+import { getAccountHeroes, getAccountNFTS, Hero } from "./nft";
 
 const ADDRESS = "0x0C4F1b8471BAEb0E301FEb31414A1D941F03166B";
 
@@ -41,8 +41,32 @@ const verifyAuthRequest = async (address: string, signature: string) => {
 
 const main = async () => {
   try {
-    const address = await getAccountAddress();
-    console.log("address: ", address);
+    // const address = await getAccountAddress();
+    // console.log("address: ", address);
+
+    const nfts = await getAccountNFTS(
+      "0xA136257F76ae50801dCeD28d500EBf137CDB143a"
+    );
+
+    let heroes = await getAccountHeroes(nfts);
+    console.log("heroes: ", heroes);
+
+    heroes.sort((a, b) => a.rarity - b.rarity);
+
+    let rarities = new Map<number, number>();
+
+    for (const hero of heroes) {
+      const index = hero.rarity;
+      const count = rarities.get(index);
+
+      if (count) {
+        rarities.set(index, count + 1);
+      } else {
+        rarities.set(index, 1);
+      }
+    }
+
+    console.log(rarities.entries());
 
     // const stringToSign = await createAuthRequest(address);
     // console.log("stringToSign: ", stringToSign);

@@ -16,7 +16,7 @@ enum Rarity {
   SUPER_LEGENDARY,
 }
 
-class Hero {
+export class Hero {
   id!: string;
   index!: string;
   rarity!: Rarity;
@@ -123,4 +123,11 @@ export const getAccountNFTS = (address: string) =>
 export const getAccountHeroes = (nfts: string[]) =>
   new Promise<Hero[]>((resolve) => {
     resolve(nfts.map((nft) => decodeHero(nft)));
+  });
+
+export const getTokenIdCounter = (): Promise<number> =>
+  new Promise(async (resolve) => {
+    const ERC721 = new web3.eth.Contract(abi as any, CONTRACT_ADDRESS);
+
+    resolve(await ERC721.methods.tokenIdCounter().call());
   });
