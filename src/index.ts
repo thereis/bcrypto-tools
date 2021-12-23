@@ -2,6 +2,8 @@ import WS from "ws";
 import axios from "axios";
 import { getAccountAddress, signRequest } from "./web3";
 import { getAccountHeroes, getAccountNFTS, Hero } from "./nft";
+import { getBlockHash } from "./blockContract";
+import BN from "bn.js";
 
 const ADDRESS = "0x0C4F1b8471BAEb0E301FEb31414A1D941F03166B";
 
@@ -45,9 +47,12 @@ const main = async () => {
     // console.log("address: ", address);
 
     const nfts = await getAccountNFTS(
-      "0xA136257F76ae50801dCeD28d500EBf137CDB143a"
+      "0x9ff29073b216601f60d8b7cd8f693ece33dd2a04"
     );
 
+    console.log(await getBlockHash(new BN(13678630)));
+
+    console.log("nfts: ", nfts);
     let heroes = await getAccountHeroes(nfts);
     console.log("heroes: ", heroes);
 

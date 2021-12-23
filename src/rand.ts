@@ -4,9 +4,11 @@ import Web3 from "web3";
 import BN from "bn.js";
 import { BlockTransactionString } from "web3-eth";
 import { BlockNumber } from "web3-core";
-import { getBlock, getBlockHash } from "./blockhash";
+import { getBlock } from "./blockhash";
+import { getBlockHash } from "./blockContract";
 import { Utils } from "./utils";
-import { getTokenIdCounter } from "./nft";
+import { decodeHero, getTokenIdCounter } from "./nft";
+import { Details, encodeNFT, rarityStats, setIndex } from "./createNft";
 
 const { encodePacked, keccak256, toBN, soliditySha3 } = Web3.utils;
 
@@ -23,6 +25,11 @@ class CreateTokenRequest {
     Object.assign(this, params);
   }
 }
+
+const COLOR_COUNT = toBN(5);
+const SKIN_COUNT = toBN(8);
+const BOMB_SKIN_COUNT = toBN(20);
+const abilityIds = [1, 2, 3, 4, 5, 6, 7].map((id) => toBN(id));
 
 enum BHeroDetails {
   ALL_RARITY,
@@ -52,30 +59,101 @@ const createToken = async (
   seed: BN
 ) => {
   for (let i = 0; i < count; i++) {
-    console.log("id", await getTokenIdCounter());
+    const id = tokenIdCounter;
+    console.log("id: ", id);
+
+    const tokenSeed = toBN(soliditySha3(seed, id)!);
+    console.log("tokenSeed: ", tokenSeed.toString());
+
+    const block = await getBlock(13712850);
+
+    if (!block) {
+      throw new Error("Block not found");
+    }
+
+    // const block = await getBlock(currentBlockNumber);
+    const parentBlock = await getBlock(currentBlockNumber - 1);
+    const utils = new Utils(block, parentBlock);
+    const result = utils.randomByWeights(tokenSeed);
 
     if (BHeroDetails.ALL_RARITY === rarity) {
-      const id = tokenIdCounter;
-      const tokenSeed = toBN(soliditySha3(seed, id)!);
-      console.log("tokenSeed: ", tokenSeed.toString());
-
-      const block = await getBlock(currentBlockNumber);
-      const parentBlock = await getBlock(currentBlockNumber - 1);
-
-      const result = new Utils(block, parentBlock, tokenSeed).randomByWeights();
       console.log("result: ", result.index);
-
-      tokenIdCounter = tokenIdCounter + 1;
     } else {
       console.log("Rarity is common!");
     }
+
+    const stats = rarityStats[result.index];
+
+    const color = utils.randomRangeInclusive(result.seed, toBN(1), COLOR_COUNT);
+    const skin = utils.randomRangeInclusive(
+      color.nextSeed,
+      toBN(1),
+      SKIN_COUNT
+    );
+    const stamina = utils.randomRangeInclusive(
+      skin.nextSeed,
+      stats.stamina.min,
+      stats.stamina.max
+    );
+
+    const speed = utils.randomRangeInclusive(
+      stamina.nextSeed,
+      stats.speed.min,
+      stats.speed.max
+    );
+
+    const bombSkin = utils.randomRangeInclusive(
+      speed.nextSeed,
+      toBN(1),
+      BOMB_SKIN_COUNT
+    );
+
+    const bombPower = utils.randomRangeInclusive(
+      bombSkin.nextSeed,
+      stats.bombPower.min,
+      stats.bombPower.max
+    );
+
+    const abilities = utils.randomSampling(
+      bombPower.nextSeed,
+      abilityIds,
+      stats.ability
+    );
+
+    let details = new Details({
+      id: toBN(id),
+      index: toBN(0),
+      rarity: toBN(result.index),
+      level: toBN(1),
+      bombCount: stats.bombCount,
+      bombRange: stats.bombRange,
+      color: color.result,
+      skin: skin.result,
+      stamina: stamina.result,
+      speed: speed.result,
+      bombSkin: bombSkin.result,
+      bombPower: bombPower.result,
+      abilities: abilities.result,
+    });
+
+    const encodedDetails = encodeNFT(details);
+    const decodedDetails = decodeHero(encodedDetails.toString());
+
+    console.log("decodedDetails: ", decodedDetails);
+
+    tokenIdCounter = id + 1;
   }
+
+  console.log("end tokenIdCounter: ", tokenIdCounter);
 };
 
 const mint = async () => {
-  tokenIdCounter = await getTokenIdCounter();
+  tokenIdCounter = +(await getTokenIdCounter());
+  // tokenIdCounter = 7094850;
 
-  const blockNumber = toBN(13679000);
+  console.log("start tokenIdCounter: ", tokenIdCounter);
+
+  const blockNumber = toBN(13712800);
   console.log("blockNumber: ", blockNumber.toString());
 
   const requests = [
@@ -103,7 +181,7 @@ const mint = async () => {
     let targetBlock = requestTargetBlock;
     let rarity = requestRarity;
 
-    let seed = toBN(await getBlockHash(targetBlock.toNumber()));
+    let seed = toBN(await getBlockHash(targetBlock));
     console.log("seed: ", seed.toString("hex"));
 
     if (seed.eq(toBN(0))) {
@@ -120,7 +198,7 @@ const mint = async () => {
         targetBlock = targetBlock.sub(toBN(256));
       }
 
-      seed = toBN(await getBlockHash(targetBlock.toNumber()));
+      seed = toBN(await getBlockHash(targetBlock));
     }
 
     await createToken(currentBlockNumber, count, rarity, seed);

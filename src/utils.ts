@@ -16,8 +16,7 @@ export const objectToString = (object: any) => {
 export class Utils {
   constructor(
     private block: BlockTransactionString,
-    private parentBlock: BlockTransactionString,
-    private seed: BN
+    private parentBlock: BlockTransactionString
   ) {}
 
   private weights = [8287, 1036, 518, 104, 52, 4];
@@ -25,45 +24,50 @@ export class Utils {
   /**
    * Calculates a random seed value
    */
-  randomSeed = () =>
+  randomSeed = (seed: BN) =>
     toBN(
       soliditySha3(
         this.block.timestamp,
         this.parentBlock.hash,
         this.block.difficulty,
-        this.seed
+        seed
       )!
     );
 
   // Random [0, modulus)
-  random = (modulus: BN) => {
-    let nextSeed = this.randomSeed();
+  random = (seed: BN, modulus: BN) => {
+    let nextSeed = this.randomSeed(seed);
     const result = nextSeed.mod(modulus);
 
     return { nextSeed, result };
   };
 
   // Random [from, to)
-  randomRange = (from: BN, to: BN) => {
+  randomRange = (seed: BN, from: BN, to: BN) => {
     if (from.gt(to)) {
       throw new Error("Invalid random range");
     }
 
-    let { nextSeed, result } = this.random(to.sub(from));
+    let { nextSeed, result } = this.random(seed, to.sub(from));
 
     result = result.add(from);
 
     return { nextSeed, result };
   };
 
-  randomByWeights = () => {
+  randomRangeInclusive = (seed: BN, from: BN, to: BN) => {
+    return this.randomRange(seed, from, to.add(toBN(1)));
+  };
+
+  randomByWeights = (seed: BN) => {
     let totalWeight = toBN(0);
 
     for (let i = 0; i < this.weights.length; ++i) {
       totalWeight = totalWeight.add(toBN(this.weights[i]));
     }
 
-    const { nextSeed: seed, result: randMod } = this.randomRange(
+    const { nextSeed, result: randMod } = this.randomRange(
+      seed,
       toBN(0),
       totalWeight
     );
@@ -75,7 +79,7 @@ export class Utils {
 
       if (randMod.lt(total)) {
         return {
-          seed,
+          seed: nextSeed,
           index,
         };
       }
@@ -85,5 +89,26 @@ export class Utils {
   };
 
   // Reservoir sampling
-  randomSampling = () => {};
+  randomSampling = (seed: BN, arr: BN[], size: BN) => {
+    const results = [];
+
+    for (let i = 0; i < size.toNumber(); ++i) {
+      results.push(arr[i]);
+    }
+
+    let j: BN;
+
+    for (let i = size.toNumber(); i < arr.length; ++i) {
+      const { nextSeed, result } = this.randomRange(seed, toBN(0), toBN(i));
+
+      j = result;
+      seed = nextSeed;
+
+      if (j.lt(size)) {
+        results[j.toNumber()] = arr[i];
+      }
+    }
+
+    return { seed, result: results };
+  };
 }

@@ -37,7 +37,7 @@ export class Hero {
   }
 }
 
-const decodeId = (big: BN) => big.and(big.shln(30).sub(toBN(1)));
+const decodeId = (big: BN) => big.and(toBN(1).shln(30).sub(toBN(1)));
 
 const decodeIndex = (big: BN) =>
   big.shrn(30).and(toBN(1).shln(10).sub(toBN(1)));
@@ -73,7 +73,7 @@ const decodeAbilities = (uint256: BN, ability: BN): BN[] => {
   return abilities;
 };
 
-const decodeHero = (hash: string) => {
+export const decodeHero = (hash: string) => {
   const details = Web3.utils.toBN(hash);
 
   let id = decodeId(details).toString();
