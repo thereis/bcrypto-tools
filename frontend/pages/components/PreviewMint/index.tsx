@@ -1,58 +1,170 @@
-import React from "react";
+import BN from "bn.js";
+import React, { useRef, useState } from "react";
+import { BlockTransactionString } from "web3-eth";
+
+/**
+ * Dependencies
+ */
+import { toBN } from "web3-utils";
+import {
+  bytes32ToBN,
+  getBlockHash,
+  getCurrentBlockTimestamp,
+  toBlockNumber,
+} from "../../../core/blockhash";
+import { Hero } from "../../../core/models/hero";
+import { Web3Service } from "../../../core/web3";
+import Alert from "../../shared/components/Alert";
 
 /**
  * Components
  */
 import Box from "../../shared/components/Box";
+import Button from "../../shared/components/Button";
+import HeroViewer from "../../shared/components/HeroViewer";
 import Input from "../../shared/components/Input";
+import { mint } from "./utils/mint";
 
 type State = {
   amount: string; // Amount of heroes to mint
   block: string; // Current block number
+  blockTimestamp: string; // Current block timestamp
+  parentBlockHash: string; // Parent block hash
   targetBlock: string;
   targetBlockHash: string;
   tokenId: string;
-  tokenSeed: string;
 };
 
 const PreviewMint: React.FC = () => {
-  const [state, setState] = React.useState<State>({
-    amount: "1", // Amount of heroes to mint
-    block: "0", // Current block number
-    targetBlock: "0", // Block number when called mint()
+  const provider = Web3Service.getWeb3();
+  const refBlock = useRef<BlockTransactionString>();
+
+  const [state, setState] = useState<State>({
+    amount: "", // Amount of heroes to mint
+    block: "", // Current block number
+    blockTimestamp: "", // Current block timestamp
+    parentBlockHash: "", // Parent block hash
+    targetBlock: "", // Block number when called mint()
     targetBlockHash: "", // blockhash(targetBlock)
-    tokenId: "0", // Global token ID
-    tokenSeed: "", // Generated token seed = blockhash(targetBlock, tokenId)
+    tokenId: "", // Global token ID
   });
 
+  const [heroes, setHeroes] = useState<Hero[]>();
+
+  const [error, setError] = useState("");
+
+  const updateState = (key: keyof State, value: string) =>
+    setState((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
+
   const _handleChange =
-    (key: string) => (e: React.FormEvent<HTMLInputElement>) => {
+    (key: keyof State) => (e: React.FormEvent<HTMLInputElement>) => {
       const { value } = e.currentTarget;
 
-      setState((prevState) => ({
-        ...prevState,
-        [key]: value || "",
-      }));
+      updateState(key, value);
     };
 
+  const _handleMintOnClick = async () => {
+    try {
+      setError("");
+
+      const blockNumber = toBN(state.block);
+      const startTokenId = toBN(state.tokenId);
+
+      const targetBlock = toBN(state.targetBlockHash);
+      const blockTimeStamp = toBN(state.blockTimestamp);
+
+      const result = await mint({
+        blockNumber,
+        count: +state.amount,
+        startTokenId,
+        targetBlock,
+        parentBlockHash: state.parentBlockHash,
+        blockTimeStamp,
+      });
+
+      setHeroes(result);
+    } catch (error: any) {
+      console.log("error: ", error);
+
+      setError(error.message);
+
+      return null;
+    }
+  };
+
+  React.useEffect(() => {
+    const _load = async () => {
+      const refBlockNumber = (await provider.eth.getBlockNumber()) - 256;
+      const result = await provider.eth.getBlock(refBlockNumber);
+
+      refBlock.current = result;
+    };
+
+    _load();
+  }, []);
+
+  React.useEffect(() => {
+    const _load = async () => {
+      if (!state.block || !refBlock.current) return;
+
+      const parentBlockNumber = toBN(state.block).sub(toBN(1));
+
+      const past = new BN(refBlock.current.number);
+      const future = new BN(state.block);
+
+      const diff = future.sub(past).mul(new BN(3));
+      const result = new BN(refBlock.current.timestamp).add(diff);
+
+      const parentBlockHash = bytes32ToBN(
+        await getBlockHash(parentBlockNumber)
+      );
+
+      updateState("blockTimestamp", result.toString());
+      updateState("parentBlockHash", parentBlockHash.toString());
+    };
+
+    _load();
+  }, [state.block]);
+
+  React.useEffect(() => {
+    if (!state.targetBlock) return;
+
+    const _load = async () => {
+      const targetBlockHash = bytes32ToBN(
+        await getBlockHash(toBN(state.targetBlock))
+      );
+
+      updateState("targetBlockHash", targetBlockHash.toString());
+    };
+
+    _load();
+  }, [state.targetBlock]);
+
   return (
-    <>
-      <Box className="flex flex-col flex-1">
+    <div className="flex flex-col gap-6 h-min w-3/4">
+      <Box className="flex flex-col">
+        {error && <Alert type="error" message={error} />}
+
         <div className="flex gap-4">
           <Input
             id={"amount"}
+            className="w-64"
             value={state.amount}
             onChange={_handleChange("amount")}
-            label="Amount of heroes to mint"
+            label="Heroes to be minted"
             placeholder="Amount"
           />
 
           <Input
-            id={"block"}
-            value={state.block}
-            onChange={_handleChange("block")}
-            label="Current block number"
-            placeholder="Block number"
+            id={"targetBlock"}
+            className="w-1/2"
+            value={state.targetBlock}
+            onChange={_handleChange("targetBlock")}
+            label="Request target block"
+            placeholder="Block number when called mint()"
           />
 
           <Input
@@ -66,31 +178,25 @@ const PreviewMint: React.FC = () => {
 
         <div className="flex gap-4">
           <Input
-            id={"targetBlock"}
-            value={state.targetBlock}
-            onChange={_handleChange("targetBlock")}
-            label="Target block"
-            placeholder="Block number when called mint()"
-          />
-
-          <Input
-            id={"targetBlockHash"}
-            value={state.targetBlockHash}
-            onChange={_handleChange("targetBlockHash")}
-            label="Target block hash"
-            placeholder="Target block hash"
-          />
-
-          <Input
-            id={"tokenSeed"}
-            value={state.tokenSeed}
-            onChange={_handleChange("tokenSeed")}
-            label="Token seed"
-            placeholder="Token seed"
+            id={"block"}
+            className="w-1/2"
+            value={state.block}
+            onChange={_handleChange("block")}
+            label="Block number"
+            placeholder="Block number when called processTokenRequest()"
           />
         </div>
+
+        <Button onClick={_handleMintOnClick}>Mint</Button>
       </Box>
-    </>
+
+      <Box>
+        <h1 className="text-white text-lg">Results</h1>
+        <h2 className="text-white text-sm">Your generated heroes</h2>
+
+        <div>{heroes && <HeroViewer heroes={heroes} />}</div>
+      </Box>
+    </div>
   );
 };
 

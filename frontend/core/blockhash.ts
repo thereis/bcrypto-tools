@@ -2,20 +2,34 @@ import * as RLP from "rlp";
 import Web3 from "web3";
 import BN from "bn.js";
 import abi from "./abi/blockhash.json";
-import { AbiItem } from "web3-utils";
+import { AbiItem, hexToBytes } from "web3-utils";
+import { utils } from "ethers";
 
+const CONTRACT_ADDRESS = "0x3acA0af190BB423A27511CDad0Df77928ed377af";
 const web3 = new Web3("https://bsc-dataseed1.binance.org:443");
+
+const contract = new web3.eth.Contract(abi as AbiItem[], CONTRACT_ADDRESS);
 
 const { keccak256 } = web3.utils;
 
-const CONTRACT_ADDRESS = "0x3acA0af190BB423A27511CDad0Df77928ed377af";
+export const bytes32ToBN = (bytes32str: string) =>
+  new BN(hexToBytes(bytes32str));
 
 export const getBlockHash = async (blockNumber: BN): Promise<string> =>
   new Promise(async (resolve, reject) => {
     try {
-      const BEP20 = new web3.eth.Contract(abi as AbiItem[], CONTRACT_ADDRESS);
+      resolve(
+        await contract.methods.getBlockHash(blockNumber.toString()).call()
+      );
+    } catch (e) {
+      reject(e);
+    }
+  });
 
-      resolve(await BEP20.methods.getBlockHash(blockNumber.toNumber()).call());
+export const getCurrentBlockTimestamp = (): Promise<string> =>
+  new Promise(async (resolve, reject) => {
+    try {
+      resolve(await contract.methods.getCurrentBlockTimestamp().call());
     } catch (e) {
       reject(e);
     }

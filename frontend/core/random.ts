@@ -1,9 +1,7 @@
 import BN from "bn.js";
-import Web3 from "web3";
+import { toBN, encodePacked, keccak256 } from "web3-utils";
 
-import { BlockTransactionString } from "web3-eth";
-
-const { toBN, soliditySha3 } = Web3.utils;
+export const encrypt = (params: any[]) => keccak256(encodePacked(...params)!);
 
 export const objectToString = (object: any) => {
   return JSON.stringify(object, (key, value) => {
@@ -15,24 +13,22 @@ export const objectToString = (object: any) => {
 };
 
 export class Random {
-  constructor(
-    private block: BlockTransactionString,
-    private parentBlock: BlockTransactionString
-  ) {}
+  constructor(private timestamp: string, private parentBlockHash: string) {}
 
   private weights = [8287, 1036, 518, 104, 52, 4];
+  private complexity = 2;
 
   /**
    * Calculates a random seed value
    */
   randomSeed = (seed: BN) =>
     toBN(
-      soliditySha3(
-        this.block.timestamp,
-        this.parentBlock.hash,
-        this.block.difficulty,
-        seed
-      )!
+      encrypt([
+        this.timestamp,
+        this.parentBlockHash,
+        this.complexity,
+        seed.toString(),
+      ])!
     );
 
   // Random [0, modulus)

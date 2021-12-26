@@ -9,10 +9,16 @@ type Props = {
   primary: string | number;
   secondary: string | number;
   isLast?: boolean;
-};
+} & React.HTMLAttributes<HTMLDivElement>;
 
-const ListItem: React.FC<Props> = ({ primary, secondary, isLast }) => {
+const ListItem: React.FC<Props> = ({
+  primary,
+  secondary,
+  isLast,
+  className,
+}) => {
   const cn = classnames(
+    className,
     {
       "border-b": !isLast,
     },

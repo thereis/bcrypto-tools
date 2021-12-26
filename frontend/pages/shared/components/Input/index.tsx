@@ -1,5 +1,10 @@
 import React from "react";
 
+/**
+ * Dependencies
+ */
+import classnames from "classnames";
+
 type Props = {
   id: string;
   value: string;
@@ -7,7 +12,7 @@ type Props = {
   placeholder: string;
   disabled?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-};
+} & React.HtmlHTMLAttributes<HTMLDivElement>;
 
 const Input: React.FC<Props> = ({
   id,
@@ -15,10 +20,14 @@ const Input: React.FC<Props> = ({
   label,
   onChange,
   disabled = false,
+  className,
   placeholder,
+  ...props
 }) => {
+  const cn = classnames(className, "mb-6");
+
   return (
-    <div className="mb-6">
+    <div {...props} className={cn}>
       <label
         htmlFor="account"
         className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"

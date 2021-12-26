@@ -1,3 +1,44 @@
-export const processTokenRequests = () => {};
+import BN from "bn.js";
+import { BHeroDetails } from "../../../../core/bhero";
+import { createToken } from "./create-token";
+import { processTokenRequests } from "./process-token-request";
+import { requestCreateToken } from "./request-create-token";
 
-export const mint = (count: number) => {};
+type Params = {
+  blockNumber: BN;
+  blockTimeStamp: BN;
+  parentBlockHash: string;
+
+  startTokenId: BN;
+  targetBlock: BN;
+
+  count: number;
+};
+
+export const mint = async ({
+  blockNumber,
+  blockTimeStamp,
+  parentBlockHash,
+  targetBlock,
+  startTokenId,
+  count,
+}: Params) => {
+  const request = requestCreateToken({
+    targetBlock: targetBlock.toString(),
+    count,
+    rarity: BHeroDetails.ALL_RARITY,
+  });
+
+  const { seed, rarity } = await processTokenRequests({ blockNumber, request });
+
+  const { results } = createToken({
+    seed,
+    rarity,
+    count,
+    timestamp: blockTimeStamp.toString(),
+    parentBlockHash,
+    startTokenId,
+  });
+
+  return results;
+};

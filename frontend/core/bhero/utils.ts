@@ -1,6 +1,9 @@
 import BN from "bn.js";
 import { Stats, StatsRange } from "../models/stats";
 
+export const MASK_FIRST_248_BITS = new BN(0xff).notn(256);
+export const MASK_LAST_8_BITS = new BN(0xff);
+
 export const rarityStats = [
   new Stats({
     stamina: new StatsRange(new BN(1), new BN(3)),
