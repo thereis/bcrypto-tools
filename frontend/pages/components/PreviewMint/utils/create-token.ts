@@ -96,7 +96,7 @@ export const createToken = ({
 
     let details = new Details({
       id: tokenId,
-      index: toBN(0),
+      index: toBN(i),
       rarity: toBN(result.index),
       level: toBN(1),
       bombCount: stats.bombCount,
