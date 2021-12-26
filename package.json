@@ -6,7 +6,8 @@
   "scripts": {
     "dev:arg": "tsnd --respawn ",
     "dev:ts": "tsnd --respawn src/index.ts",
-    "tsnd": "tsnd --respawn"
+    "tsnd": "tsnd --respawn",
+    "build": "tsc"
   },
   "dependencies": {
     "@types/node": "^16.11.10",

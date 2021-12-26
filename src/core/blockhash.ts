@@ -1,4 +1,4 @@
-import abi from "./abi_block.json";
+import abi from "./abi/blockhash.json";
 import Web3 from "web3";
 import BN from "bn.js";
 const web3 = new Web3("https://bsc-dataseed1.binance.org:443");
