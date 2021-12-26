@@ -47,6 +47,7 @@ const AddressFinder: React.FC<Props> = ({
       {error && <Alert type="error" message={error} />}
 
       <Input
+        id={"nftId"}
         label="Get wallet address by NFT ID"
         value={nftId}
         onChange={_handleChangeNftId}

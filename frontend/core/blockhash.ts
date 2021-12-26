@@ -11,11 +11,17 @@ const { keccak256 } = web3.utils;
 const CONTRACT_ADDRESS = "0x3acA0af190BB423A27511CDad0Df77928ed377af";
 
 export const getBlockHash = async (blockNumber: BN): Promise<string> =>
-  new Promise(async (resolve) => {
-    const BEP20 = new web3.eth.Contract(abi as AbiItem[], CONTRACT_ADDRESS);
+  new Promise(async (resolve, reject) => {
+    try {
+      const BEP20 = new web3.eth.Contract(abi as AbiItem[], CONTRACT_ADDRESS);
 
-    resolve(await BEP20.methods.getBlockHash(blockNumber.toNumber()).call());
+      resolve(await BEP20.methods.getBlockHash(blockNumber.toNumber()).call());
+    } catch (e) {
+      reject(e);
+    }
   });
+
+export const toBlockNumber = (blockNumber: number) => new BN(blockNumber);
 
 export const getBlock = async (blockNumber: number) =>
   await web3.eth.getBlock(blockNumber);

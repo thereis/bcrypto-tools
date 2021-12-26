@@ -1,6 +1,14 @@
 import React, { useState } from "react";
+
+/**
+ * Dependencies
+ */
 import { decodeToHeroes, getAccountNFTS } from "../../../core/bhero";
 import { Hero } from "../../../core/models/hero";
+
+/**
+ * Components
+ */
 import AddressFinder from "../../shared/components/AddressFinder/AddressFinder";
 import Alert from "../../shared/components/Alert";
 import Box from "../../shared/components/Box";
@@ -46,6 +54,7 @@ const HeroFinder: React.FC = () => {
         {error && <Alert type="error" message={error} />}
 
         <Input
+          id={"address"}
           label="Get account NFTs"
           value={address}
           onChange={_handleAccountChange}
