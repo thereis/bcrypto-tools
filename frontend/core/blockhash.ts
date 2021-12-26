@@ -40,7 +40,8 @@ export const toBlockNumber = (blockNumber: number) => new BN(blockNumber);
 export const getBlock = async (blockNumber: number) =>
   await web3.eth.getBlock(blockNumber);
 
-export const calculateBlockHash = async (blockNumber: number) => {
+export const calculateBlockHash = async (param: BN) => {
+  const blockNumber = param.toNumber();
   const result = await web3.eth.getBlock(blockNumber);
 
   // It should return this when the block is too far in the future.

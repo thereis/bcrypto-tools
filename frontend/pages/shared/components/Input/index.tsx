@@ -8,7 +8,8 @@ import classnames from "classnames";
 type Props = {
   id: string;
   value: string;
-  label: string;
+  primary: string;
+  secondary?: string;
   placeholder: string;
   disabled?: boolean;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -17,7 +18,8 @@ type Props = {
 const Input: React.FC<Props> = ({
   id,
   value,
-  label,
+  primary,
+  secondary,
   onChange,
   disabled = false,
   className,
@@ -30,9 +32,10 @@ const Input: React.FC<Props> = ({
     <div {...props} className={cn}>
       <label
         htmlFor="account"
-        className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+        className="block mb-2 font-medium text-gray-900 dark:text-gray-300"
       >
-        {label}
+        <p className="text-base">{primary}</p>
+        {secondary && <p className="text-xs">{secondary}</p>}
       </label>
 
       <input

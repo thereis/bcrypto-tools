@@ -7,5 +7,10 @@ module.exports = {
   theme: {
     extend: {},
   },
-  plugins: [require("@themesberg/flowbite/plugin")],
+  plugins: [
+    require("@tailwindcss/forms")({
+      strategy: "class",
+    }),
+    require("@themesberg/flowbite/plugin"),
+  ],
 };

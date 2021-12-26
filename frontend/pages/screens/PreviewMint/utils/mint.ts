@@ -13,6 +13,8 @@ type Params = {
   targetBlock: BN;
 
   count: number;
+
+  isPast?: boolean;
 };
 
 export const mint = async ({
@@ -22,14 +24,20 @@ export const mint = async ({
   targetBlock,
   startTokenId,
   count,
+  isPast = false,
 }: Params) => {
   const request = requestCreateToken({
     targetBlock: targetBlock.toString(),
     count,
     rarity: BHeroDetails.ALL_RARITY,
+    isPast,
   });
 
-  const { seed, rarity } = await processTokenRequests({ blockNumber, request });
+  const { seed, rarity } = await processTokenRequests({
+    blockNumber,
+    request,
+    isPast,
+  });
 
   const { results } = createToken({
     seed,

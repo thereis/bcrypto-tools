@@ -6,6 +6,7 @@ import { AbiItem, toBN } from "web3-utils";
 import abi from "./abi/bhero.json";
 
 const web3 = Web3Service.getWeb3();
+const web3Socket = Web3Service.getWebSocket();
 
 const CONTRACT_ADDRESS = "0x30cc0553f6fa1faf6d7847891b9b36eb559dc618";
 
@@ -20,6 +21,9 @@ export enum BHeroDetails {
 
 export const getBHeroContract = () =>
   new web3.eth.Contract(abi as AbiItem[], CONTRACT_ADDRESS);
+
+export const getWebSocketBHeroContract = () =>
+  new web3Socket.eth.Contract(abi as AbiItem[], CONTRACT_ADDRESS);
 
 export const getAccountNFTS = (address: string) =>
   new Promise<string[]>(async (resolve, reject) => {

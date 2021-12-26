@@ -48,7 +48,7 @@ const AddressFinder: React.FC<Props> = ({
 
       <Input
         id={"nftId"}
-        label="Get wallet address by NFT ID"
+        primary="Get wallet address by NFT ID"
         value={nftId}
         onChange={_handleChangeNftId}
         placeholder="NFT id"

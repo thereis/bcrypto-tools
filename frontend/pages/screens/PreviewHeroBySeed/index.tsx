@@ -43,7 +43,7 @@ const PreviewHeroBySeed: React.FC = ({}) => {
     <Box className="mt-6">
       <Input
         id="seed"
-        label="Seed"
+        primary="Seed"
         value={seed}
         onChange={_handleSeedOnChange}
         placeholder="Hero seed"

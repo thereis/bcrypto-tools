@@ -55,7 +55,7 @@ const HeroFinder: React.FC = () => {
 
         <Input
           id={"address"}
-          label="Get account NFTs"
+          primary="Get account NFTs"
           value={address}
           onChange={_handleAccountChange}
           placeholder="0x..."

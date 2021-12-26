@@ -6,15 +6,17 @@ type Params = {
   targetBlock: string;
   count: number;
   rarity: BHeroDetails;
+  isPast?: boolean;
 };
 
 export const requestCreateToken = ({
   targetBlock,
   count,
   rarity = BHeroDetails.ALL_RARITY,
+  isPast = false,
 }: Params) => {
   return new CreateTokenRequest({
-    targetBlock: new BN(targetBlock).add(new BN(5)),
+    targetBlock: new BN(targetBlock).add(!isPast ? new BN(5) : new BN(0)),
     count,
     rarity,
   });
