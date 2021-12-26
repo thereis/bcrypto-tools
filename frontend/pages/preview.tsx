@@ -4,7 +4,7 @@ import Head from "next/head";
 /**
  * Components
  */
-import PreviewMint from "./components/PreviewMint";
+import PreviewMint from "./screens/PreviewMint";
 import Body from "./shared/components/Body";
 import GlobalStats from "./shared/components/GlobalStats";
 import Skeleton from "./shared/components/Skeleton";

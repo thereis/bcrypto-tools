@@ -4,7 +4,7 @@ import React from "react";
 /**
  * Components
  */
-import PreviewHeroBySeed from "./components/PreviewHeroBySeed";
+import PreviewHeroBySeed from "./screens/PreviewHeroBySeed";
 import Body from "./shared/components/Body";
 import Skeleton from "./shared/components/Skeleton";
 

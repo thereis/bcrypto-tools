@@ -4,7 +4,7 @@ import React from "react";
 /**
  * Components
  */
-import HeroFinder from "./components/HeroFinder/HeroFinder";
+import HeroFinder from "./screens/HeroFinder/HeroFinder";
 import Body from "./shared/components/Body";
 import Skeleton from "./shared/components/Skeleton";
 
