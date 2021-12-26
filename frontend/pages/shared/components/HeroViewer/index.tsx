@@ -114,7 +114,7 @@ const HeroViewer: React.FC<Props> = ({ heroes }) => {
     });
   };
 
-  const data = React.useMemo(() => generateData(heroes), []);
+  const data = React.useMemo(() => generateData(heroes), [heroes]);
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({ columns, data }, useSortBy);
