@@ -63,24 +63,12 @@ const HeroViewer: React.FC<Props> = ({ heroes }) => {
             accessor: "level",
           },
           {
-            Header: "Color",
-            accessor: "color",
-          },
-          {
-            Header: "Skin",
-            accessor: "skin",
-          },
-          {
             Header: "Stamina",
             accessor: "stamina",
           },
           {
             Header: "Speed",
             accessor: "speed",
-          },
-          {
-            Header: "Bomb Skin",
-            accessor: "bombSkin",
           },
           {
             Header: "Bomb Count",
@@ -93,10 +81,6 @@ const HeroViewer: React.FC<Props> = ({ heroes }) => {
           {
             Header: "Bomb Range",
             accessor: "bombRange",
-          },
-          {
-            Header: "Ability",
-            accessor: "ability",
           },
           {
             Header: "Abilities",
