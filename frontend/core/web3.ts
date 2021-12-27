@@ -11,7 +11,6 @@ class Web3Class {
   ) {}
 
   getWeb3 = () => this.web3;
-
   getWebSocket = () => this.websocket;
 }
 

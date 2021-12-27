@@ -3,7 +3,6 @@ import Web3 from "web3";
 import BN from "bn.js";
 import abi from "./abi/blockhash.json";
 import { AbiItem, hexToBytes } from "web3-utils";
-import { utils } from "ethers";
 
 const CONTRACT_ADDRESS = "0x3acA0af190BB423A27511CDad0Df77928ed377af";
 const web3 = new Web3("https://bsc-dataseed1.binance.org:443");

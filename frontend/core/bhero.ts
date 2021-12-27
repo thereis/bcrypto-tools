@@ -4,6 +4,10 @@ import { decode } from "./bhero/decode";
 import { AbiItem, toBN } from "web3-utils";
 
 import abi from "./abi/bhero.json";
+import Web3 from "web3";
+
+import * as bcoin from "./coin";
+import * as design from "./design";
 
 const web3 = Web3Service.getWeb3();
 const web3Socket = Web3Service.getWebSocket();
@@ -20,6 +24,9 @@ export enum BHeroDetails {
 }
 
 export const getBHeroContract = () =>
+  new web3.eth.Contract(abi as AbiItem[], CONTRACT_ADDRESS);
+
+export const setBHeroContractForCustomProvider = (web3: Web3) =>
   new web3.eth.Contract(abi as AbiItem[], CONTRACT_ADDRESS);
 
 export const getWebSocketBHeroContract = () =>
@@ -64,4 +71,37 @@ export const getAccountByNftId = (id: string): Promise<string> =>
     } catch (e) {
       reject(e);
     }
+  });
+
+export const upgrade = (provider: Web3, baseId: number, materialId: number) =>
+  new Promise(async (resolve, reject) => {
+    try {
+      const enhancedContract = setBHeroContractForCustomProvider(provider);
+      const account = provider.eth.defaultAccount;
+
+      const cost = await design.getUpgradeCost(0, 1);
+      await bcoin.checkBCOINAllowance(account, cost);
+
+      await new Promise((resolve, reject) => {
+        enhancedContract.methods
+          .upgrade(baseId, materialId)
+          .send({
+            from: account,
+            gas: 190000,
+          })
+          .on("confirmation", (confirmationNumber: any, receipt: any) => {
+            if (confirmationNumber >= 6) {
+              resolve(true);
+            }
+          })
+          .on("error", (ex: any) => {
+            reject(ex);
+          });
+      });
+    } catch (ex) {
+      console.error(`exception ${ex}`);
+      return reject(ex);
+    }
+
+    return resolve(true);
   });

@@ -1,14 +1,21 @@
-import Head from "next/head";
 import React from "react";
-import Body from "./shared/components/Body";
 
 /**
  * Components
  */
-
+import Head from "next/head";
 import Skeleton from "./shared/components/Skeleton";
+import Body from "./shared/components/Body";
+import { Web3ReactProvider } from "@web3-react/core";
+import { MetaMaskProvider } from "./shared/hooks/use-metamask";
 
-export default function Home() {
+import Web3 from "web3";
+
+function getLibrary(provider: any) {
+  return new Web3(provider);
+}
+
+function HomeApp() {
   return (
     <Body>
       <Head>
@@ -18,5 +25,15 @@ export default function Home() {
 
       <Skeleton />
     </Body>
+  );
+}
+
+export default function Home() {
+  return (
+    <Web3ReactProvider getLibrary={getLibrary}>
+      <MetaMaskProvider>
+        <HomeApp />
+      </MetaMaskProvider>
+    </Web3ReactProvider>
   );
 }
