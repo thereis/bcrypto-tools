@@ -35,15 +35,8 @@ export const MetaMaskProvider: React.FC = ({ children }) => {
 
   const [isActive, setIsActive] = useState(false);
   const [shouldDisable, setShouldDisable] = useState(false); // Should disable connect button while connecting to MetaMask
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [provider, setProvider] = useState<Web3>(new Web3());
-
-  // Init Loading
-  useEffect(() => {
-    connect().then((val) => {
-      setIsLoading(false);
-    });
-  }, []);
 
   // Check when App is Connected or Disconnected to MetaMask
   const handleIsActive = useCallback(() => {
