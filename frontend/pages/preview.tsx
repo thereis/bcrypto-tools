@@ -5,9 +5,9 @@ import Head from "next/head";
  * Components
  */
 import PreviewMint from "./screens/PreviewMint";
-import Body from "./shared/components/Body";
-import GlobalStats from "./shared/components/GlobalStats";
-import Skeleton from "./shared/components/Skeleton";
+import Body from "../src/shared/components/Body";
+import GlobalStats from "../src/shared/components/GlobalStats";
+import Skeleton from "../src/shared/components/Skeleton";
 
 const Preview: React.FC = () => {
   return (

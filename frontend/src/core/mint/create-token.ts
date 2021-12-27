@@ -7,13 +7,13 @@ import {
   BOMB_SKIN_COUNT,
   COLOR_COUNT,
   SKIN_COUNT,
-} from "../../../../core/bhero";
-import { decode } from "../../../../core/bhero/decode";
-import { encode } from "../../../../core/bhero/encode";
-import { rarityStats } from "../../../../core/bhero/utils";
-import { Details } from "../../../../core/models/details";
-import { Hero } from "../../../../core/models/hero";
-import { encrypt, Random } from "../../../../core/random";
+} from "../bhero";
+import { decode } from "../bhero/decode";
+import { encode } from "../bhero/encode";
+import { rarityStats } from "../bhero/utils";
+import { Details } from "../models/details";
+import { Hero } from "../models/hero";
+import { encrypt, Random } from "../random";
 
 type Params = {
   seed: BN;

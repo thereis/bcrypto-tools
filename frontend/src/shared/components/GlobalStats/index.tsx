@@ -3,13 +3,13 @@ import React, { useRef, useState } from "react";
 /**
  * Dependencies
  */
-import { Web3Service } from "../../../../core/web3";
-import { getBHeroContract } from "../../../../core/bhero";
+import { Web3Service } from "../../../core/web3";
+import { getBHeroContract } from "../../../core/bhero";
 import {
   bytes32ToBN,
   getBlockHash,
   toBlockNumber,
-} from "../../../../core/blockhash";
+} from "../../../core/blockhash";
 
 /**
  * Components

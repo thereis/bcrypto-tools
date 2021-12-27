@@ -10,19 +10,19 @@ import {
   calculateBlockHash,
   getBlock,
   getBlockHash,
-} from "../../../core/blockhash";
-import { Hero } from "../../../core/models/hero";
-import Alert from "../../shared/components/Alert";
+} from "../../../src/core/blockhash";
+import { Hero } from "../../../src/core/models/hero";
+import Alert from "../../../src/shared/components/Alert";
 
 /**
  * Components
  */
-import Box from "../../shared/components/Box";
-import Button from "../../shared/components/Button";
-import Checkbox from "../../shared/components/Checkbox";
-import HeroViewer from "../../shared/components/HeroViewer";
-import Input from "../../shared/components/Input";
-import { mint } from "./utils/mint";
+import Box from "../../../src/shared/components/Box";
+import Button from "../../../src/shared/components/Button";
+import Checkbox from "../../../src/shared/components/Checkbox";
+import HeroViewer from "../../../src/shared/components/HeroViewer";
+import Input from "../../../src/shared/components/Input";
+import { mint } from "../../../src/core/mint/mint";
 
 type State = {
   amount: string; // Amount of heroes to mint

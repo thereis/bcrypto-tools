@@ -3,18 +3,18 @@ import React, { useState } from "react";
 /**
  * Dependencies
  */
-import { decodeToHeroes, getAccountNFTS } from "../../../core/bhero";
-import { Hero } from "../../../core/models/hero";
+import { decodeToHeroes, getAccountNFTS } from "../../../src/core/bhero";
+import { Hero } from "../../../src/core/models/hero";
 
 /**
  * Components
  */
-import AddressFinder from "../../shared/components/AddressFinder/AddressFinder";
-import Alert from "../../shared/components/Alert";
-import Box from "../../shared/components/Box";
-import Button from "../../shared/components/Button";
-import HeroViewer from "../../shared/components/HeroViewer";
-import Input from "../../shared/components/Input";
+import AddressFinder from "../../../src/shared/components/AddressFinder/AddressFinder";
+import Alert from "../../../src/shared/components/Alert";
+import Box from "../../../src/shared/components/Box";
+import Button from "../../../src/shared/components/Button";
+import HeroViewer from "../../../src/shared/components/HeroViewer";
+import Input from "../../../src/shared/components/Input";
 
 const HeroFinder: React.FC = () => {
   const [address, setAddress] = useState<string>("");

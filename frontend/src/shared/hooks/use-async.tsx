@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
 // Hook
-export const useAsync = (
-  asyncFunction: () => Promise<void>,
-  immediate = true
-) => {
+const useAsync = (asyncFunction: () => Promise<void>, immediate = true) => {
   const [status, setStatus] = useState("idle");
   const [value, setValue] = useState(null);
   const [error, setError] = useState(null);
@@ -36,3 +34,5 @@ export const useAsync = (
   }, [execute, immediate]);
   return { execute, status, value, error };
 };
+
+export default useAsync;

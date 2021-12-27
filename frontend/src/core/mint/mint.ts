@@ -1,5 +1,5 @@
 import BN from "bn.js";
-import { BHeroDetails } from "../../../../core/bhero";
+import { BHeroDetails } from "../bhero";
 import { createToken } from "./create-token";
 import { processTokenRequests } from "./process-token-request";
 import { requestCreateToken } from "./request-create-token";

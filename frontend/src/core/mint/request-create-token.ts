@@ -1,6 +1,6 @@
 import BN from "bn.js";
-import { BHeroDetails } from "../../../../core/bhero";
-import { CreateTokenRequest } from "../../../../core/models/token-request";
+import { BHeroDetails } from "../bhero";
+import { CreateTokenRequest } from "../models/token-request";
 
 type Params = {
   targetBlock: string;

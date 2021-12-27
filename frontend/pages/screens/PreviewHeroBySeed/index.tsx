@@ -4,16 +4,16 @@ import React, { useState } from "react";
  * Dependencies
  */
 
-import { decodeToHero } from "../../../core/bhero";
-import { Hero } from "../../../core/models/hero";
+import { decodeToHero } from "../../../src/core/bhero";
+import { Hero } from "../../../src/core/models/hero";
 
 /**
  * Components
  */
-import Box from "../../shared/components/Box";
-import Button from "../../shared/components/Button";
-import HeroViewer from "../../shared/components/HeroViewer";
-import Input from "../../shared/components/Input";
+import Box from "../../../src/shared/components/Box";
+import Button from "../../../src/shared/components/Button";
+import HeroViewer from "../../../src/shared/components/HeroViewer";
+import Input from "../../../src/shared/components/Input";
 
 const PreviewHeroBySeed: React.FC = ({}) => {
   const [seed, setSeed] = useState("");

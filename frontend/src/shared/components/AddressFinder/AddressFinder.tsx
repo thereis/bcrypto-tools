@@ -4,7 +4,7 @@ import React, { useState } from "react";
  * Dependencies
  */
 import classnames from "classnames";
-import { getAccountByNftId } from "../../../../core/bhero";
+import { getAccountByNftId } from "../../../core/bhero";
 import Alert from "../Alert";
 import Box from "../Box";
 import Button from "../Button";

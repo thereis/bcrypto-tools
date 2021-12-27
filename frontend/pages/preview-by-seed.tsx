@@ -5,8 +5,8 @@ import React from "react";
  * Components
  */
 import PreviewHeroBySeed from "./screens/PreviewHeroBySeed";
-import Body from "./shared/components/Body";
-import Skeleton from "./shared/components/Skeleton";
+import Body from "../src/shared/components/Body";
+import Skeleton from "../src/shared/components/Skeleton";
 
 const PreviewBySeed: React.FC = () => {
   return (

@@ -1,1 +1,1 @@
-export * from "./HeroFinder";
+export { default } from "./HeroFinder";

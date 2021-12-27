@@ -3,7 +3,7 @@ import React from "react";
 /**
  * Dependencies
  */
-import { Hero, Rarity } from "../../../../core/models/hero";
+import { Hero, Rarity } from "../../../core/models/hero";
 import { Column, useSortBy, useTable } from "react-table";
 
 /**
@@ -93,9 +93,12 @@ const HeroViewer: React.FC<Props> = ({ heroes }) => {
   );
 
   const generateData = (heroes: Hero[]) => {
-    return heroes.map((hero: Hero) => {
-      return hero;
-    });
+    return (
+      heroes &&
+      heroes.map((hero: Hero) => {
+        return hero;
+      })
+    );
   };
 
   const data = React.useMemo(() => generateData(heroes), [heroes]);
@@ -120,53 +123,55 @@ const HeroViewer: React.FC<Props> = ({ heroes }) => {
             <div className="overflow-hidden shadow-md">
               <table className="min-w-full" {...getTableProps()}>
                 <thead className="bg-gray-50 dark:bg-gray-700">
-                  {headerGroups.map((headerGroup) => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                      {headerGroup.headers.map((column: any) => (
-                        <th
-                          {...column.getHeaderProps(
-                            column.getSortByToggleProps()
-                          )}
-                          className=" py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400"
-                        >
-                          {column.render("Header")}
+                  {Array.isArray(headerGroups) &&
+                    headerGroups.map((headerGroup) => (
+                      <tr {...headerGroup.getHeaderGroupProps()}>
+                        {headerGroup.headers.map((column: any) => (
+                          <th
+                            {...column.getHeaderProps(
+                              column.getSortByToggleProps()
+                            )}
+                            className=" py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400"
+                          >
+                            {column.render("Header")}
 
-                          <span>
-                            {column.isSorted
-                              ? column.isSortedDesc
-                                ? " 🔽"
-                                : " 🔼"
-                              : ""}
-                          </span>
-                        </th>
-                      ))}
-                    </tr>
-                  ))}
+                            <span>
+                              {column.isSorted
+                                ? column.isSortedDesc
+                                  ? " 🔽"
+                                  : " 🔼"
+                                : ""}
+                            </span>
+                          </th>
+                        ))}
+                      </tr>
+                    ))}
                 </thead>
                 <tbody {...getTableBodyProps()}>
-                  {rows.map((row) => {
-                    prepareRow(row);
+                  {Array.isArray(rows) &&
+                    rows.map((row) => {
+                      prepareRow(row);
 
-                    const className =
-                      row.index % 2 === 0
-                        ? "bg-white border-b dark:bg-gray-800 dark:border-gray-600"
-                        : "bg-gray-50 border-b dark:bg-gray-700 dark:border-gray-600";
+                      const className =
+                        row.index % 2 === 0
+                          ? "bg-white border-b dark:bg-gray-800 dark:border-gray-600"
+                          : "bg-gray-50 border-b dark:bg-gray-700 dark:border-gray-600";
 
-                    return (
-                      <tr className={className} {...row.getRowProps()}>
-                        {row.cells.map((cell) => {
-                          return (
-                            <td
-                              {...cell.getCellProps()}
-                              className="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                            >
-                              {cell.render("Cell")}
-                            </td>
-                          );
-                        })}
-                      </tr>
-                    );
-                  })}
+                      return (
+                        <tr className={className} {...row.getRowProps()}>
+                          {row.cells.map((cell) => {
+                            return (
+                              <td
+                                {...cell.getCellProps()}
+                                className="py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                              >
+                                {cell.render("Cell")}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
                 </tbody>
               </table>
             </div>

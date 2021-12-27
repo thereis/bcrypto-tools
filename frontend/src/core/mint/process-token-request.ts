@@ -1,14 +1,7 @@
 import BN from "bn.js";
-import {
-  MASK_FIRST_248_BITS,
-  MASK_LAST_8_BITS,
-} from "../../../../core/bhero/utils";
-import {
-  bytes32ToBN,
-  calculateBlockHash,
-  getBlockHash,
-} from "../../../../core/blockhash";
-import { CreateTokenRequest } from "../../../../core/models/token-request";
+import { MASK_FIRST_248_BITS, MASK_LAST_8_BITS } from "../bhero/utils";
+import { bytes32ToBN, calculateBlockHash, getBlockHash } from "../blockhash";
+import { CreateTokenRequest } from "../models/token-request";
 
 type Params = {
   request: CreateTokenRequest;

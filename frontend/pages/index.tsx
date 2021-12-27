@@ -4,10 +4,10 @@ import React from "react";
  * Components
  */
 import Head from "next/head";
-import Skeleton from "./shared/components/Skeleton";
-import Body from "./shared/components/Body";
+import Skeleton from "../src/shared/components/Skeleton";
+import Body from "../src/shared/components/Body";
 import { Web3ReactProvider } from "@web3-react/core";
-import { MetaMaskProvider } from "./shared/hooks/use-metamask";
+import { MetaMaskProvider } from "../src/shared/hooks/use-metamask";
 
 import Web3 from "web3";
 
