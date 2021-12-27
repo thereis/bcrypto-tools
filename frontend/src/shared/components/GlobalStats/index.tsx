@@ -105,7 +105,7 @@ const GlobalStats: React.FC = () => {
   }, []);
 
   return (
-    <Box className="flex flex-col w-1/4">
+    <Box className="flex flex-col md:w-1/4 h-min">
       <h1 className="text-white text-lg mb-2">Blockchain Stats</h1>
       <h1 className="text-gray-300 text-sm mb-2">
         Current blockchain stats updated every 1.5s

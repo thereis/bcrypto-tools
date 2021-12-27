@@ -17,7 +17,7 @@ const Preview: React.FC = () => {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
 
-      <Skeleton className="mt-6 flex gap-4">
+      <Skeleton className="mt-6 sm:flex gap-4 xs:flex-col sm:flex-row">
         <PreviewMint />
         <GlobalStats />
       </Skeleton>

@@ -36,6 +36,16 @@ export const getCurrentBlockTimestamp = (): Promise<string> =>
 
 export const toBlockNumber = (blockNumber: number) => new BN(blockNumber);
 
+export const getLastBlockNumber = async (): Promise<number> =>
+  new Promise((resolve, reject) => {
+    try {
+      const blockNumber = web3.eth.getBlockNumber();
+      resolve(blockNumber);
+    } catch (e) {
+      reject(e);
+    }
+  });
+
 export const getBlock = async (blockNumber: number) =>
   await web3.eth.getBlock(blockNumber);
 

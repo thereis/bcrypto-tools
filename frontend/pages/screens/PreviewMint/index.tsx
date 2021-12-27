@@ -10,9 +10,11 @@ import {
   calculateBlockHash,
   getBlock,
   getBlockHash,
+  getLastBlockNumber,
 } from "../../../src/core/blockhash";
 import { Hero } from "../../../src/core/models/hero";
-import Alert from "../../../src/shared/components/Alert";
+import { mint } from "../../../src/core/mint/mint";
+import { getLastTokenId } from "../../../src/core/bhero";
 
 /**
  * Components
@@ -22,7 +24,7 @@ import Button from "../../../src/shared/components/Button";
 import Checkbox from "../../../src/shared/components/Checkbox";
 import HeroViewer from "../../../src/shared/components/HeroViewer";
 import Input from "../../../src/shared/components/Input";
-import { mint } from "../../../src/core/mint/mint";
+import Alert from "../../../src/shared/components/Alert";
 
 type State = {
   amount: string; // Amount of heroes to mint
@@ -66,6 +68,18 @@ const PreviewMint: React.FC = () => {
     const { checked } = e.currentTarget;
 
     updateState("isPastMint", checked);
+  };
+
+  const _handleGetLastTokenIdOnClick = async () => {
+    const lastTokenId = await getLastTokenId();
+
+    updateState("tokenId", lastTokenId.toString());
+  };
+
+  const _handleGetLastBlockNumberOnClick = async () => {
+    const lastBlockNumber = await getLastBlockNumber();
+
+    updateState("block", lastBlockNumber.toString());
   };
 
   const _handleMintOnClick = async () => {
@@ -132,14 +146,14 @@ const PreviewMint: React.FC = () => {
   }, [state.block]);
 
   return (
-    <div className="flex flex-col gap-6 h-min w-3/4">
-      <Box className="flex flex-col">
+    <div className="flex flex-col gap-6 h-min md:w-3/4">
+      <Box className="flex flex-col gap-6">
         {error && <Alert type="error" message={error} />}
 
-        <div className="flex gap-4">
+        <div className="sm:flex sm:flex-col md:flex-row md:gap-4">
           <Input
             id={"amount"}
-            className="w-64"
+            className="md:w-64"
             value={state.amount}
             onChange={_handleChange("amount")}
             primary="Heroes to be minted"
@@ -148,39 +162,51 @@ const PreviewMint: React.FC = () => {
 
           <Input
             id={"targetBlock"}
-            className="w-1/2"
+            className="md:w-1/2"
             value={state.targetBlock}
             onChange={_handleChange("targetBlock")}
             primary="Request target block"
             placeholder="Block number when called mint()"
           />
 
-          <Input
-            id={"tokenId"}
-            value={state.tokenId}
-            onChange={_handleChange("tokenId")}
-            primary="Token ID"
-            placeholder="Token ID"
-          />
+          <div className="flex flex-col lg:w-1/6 lg:flex-1">
+            <Input
+              className="w-full"
+              id={"tokenId"}
+              value={state.tokenId}
+              onChange={_handleChange("tokenId")}
+              primary="Token ID"
+              placeholder="Token ID"
+            />
+
+            <Button onClick={_handleGetLastTokenIdOnClick}>
+              Get last token id
+            </Button>
+          </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col md:w-2/4">
           <Input
+            className=""
             id={"block"}
-            className="w-1/2"
             value={state.block}
             onChange={_handleChange("block")}
             primary="Block number"
             placeholder="Block number when called processTokenRequest()"
           />
+
+          <Button onClick={_handleGetLastBlockNumberOnClick} className="w-full">
+            Get last block number
+          </Button>
         </div>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-1">
           <Checkbox
             checked={state.isPastMint}
             onChange={_handleOnPastCheck}
             label="Does this happened in the past?"
           />
+
           <Button onClick={_handleMintOnClick}>Mint</Button>
         </div>
       </Box>
