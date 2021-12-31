@@ -20,7 +20,6 @@ export const processTokenRequests = async ({
   let targetBlock = requestTargetBlock;
 
   let seed = bytes32ToBN(await getBlockHash(targetBlock));
-  console.log(`processTokenRequests seed: ${seed.toString()}`);
 
   if (isPast && seed.eq(new BN(0))) {
     seed = bytes32ToBN(await calculateBlockHash(targetBlock));

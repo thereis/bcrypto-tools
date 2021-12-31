@@ -26,3 +26,15 @@ export const getUpgradeCost = async (
 export const getUpgradeCosts = async () => {
   return await designContract.methods.getUpgradeCosts().call();
 };
+
+export const getRarityStats = async () => {
+  return designContract.methods.getRarityStats().call();
+};
+
+export const getTokenLimit = async () => {
+  return await designContract.methods.getTokenLimit().call();
+};
+
+export const getMintCost = async () => {
+  return await designContract.methods.getMintCost().call();
+};

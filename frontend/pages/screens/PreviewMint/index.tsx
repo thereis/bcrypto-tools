@@ -14,7 +14,11 @@ import {
 } from "../../../src/core/blockhash";
 import { Hero } from "../../../src/core/models/hero";
 import { mint } from "../../../src/core/mint/mint";
-import { getLastTokenId } from "../../../src/core/bhero";
+import {
+  getLastTokenId,
+  mintHero,
+  processTokenRequests,
+} from "../../../src/core/bhero";
 
 /**
  * Components
@@ -25,6 +29,8 @@ import Checkbox from "../../../src/shared/components/Checkbox";
 import HeroViewer from "../../../src/shared/components/HeroViewer";
 import Input from "../../../src/shared/components/Input";
 import Alert from "../../../src/shared/components/Alert";
+import useMetaMask from "../../../src/shared/hooks/use-metamask";
+import { useDebouncedCallback } from "use-debounce";
 
 type State = {
   amount: string; // Amount of heroes to mint
@@ -34,9 +40,12 @@ type State = {
   targetBlock: string;
   tokenId: string;
   isPastMint: boolean;
+  shouldMint: boolean;
 };
 
 const PreviewMint: React.FC = () => {
+  const { connect, provider, isActive, isLoading, disconnect } = useMetaMask();
+
   const [state, setState] = useState<State>({
     amount: "", // Amount of heroes to mint
     block: "", // Current block number
@@ -45,6 +54,7 @@ const PreviewMint: React.FC = () => {
     targetBlock: "", // Block number when called mint()
     tokenId: "", // Global token ID
     isPastMint: false,
+    shouldMint: false,
   });
 
   const [heroes, setHeroes] = useState<Hero[]>();
@@ -57,17 +67,20 @@ const PreviewMint: React.FC = () => {
       [key]: value,
     }));
 
-  const _handleChange =
-    (key: keyof State) => (e: React.FormEvent<HTMLInputElement>) => {
-      const { value } = e.currentTarget;
-
-      updateState(key, value);
-    };
+  const _handleChange = (key: keyof State) => (value: string) => {
+    updateState(key, value);
+  };
 
   const _handleOnPastCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { checked } = e.currentTarget;
 
     updateState("isPastMint", checked);
+  };
+
+  const _handleOnShouldMintCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked } = e.currentTarget;
+
+    updateState("shouldMint", checked);
   };
 
   const _handleGetLastTokenIdOnClick = async () => {
@@ -76,10 +89,14 @@ const PreviewMint: React.FC = () => {
     updateState("tokenId", lastTokenId.toString());
   };
 
-  const _handleGetLastBlockNumberOnClick = async () => {
+  const _handleGetLastBlockNumberOnClick = (key: keyof State) => async () => {
     const lastBlockNumber = await getLastBlockNumber();
 
-    updateState("block", lastBlockNumber.toString());
+    if (key === "targetBlock") {
+      updateState("block", Number(+lastBlockNumber + 5).toString());
+    }
+
+    updateState(key, lastBlockNumber.toString());
   };
 
   const _handleMintOnClick = async () => {
@@ -103,6 +120,10 @@ const PreviewMint: React.FC = () => {
       });
 
       setHeroes(result);
+
+      if (state.shouldMint) {
+        await mintHero(provider, +state.amount);
+      }
     } catch (error: any) {
       console.log("error: ", error);
 
@@ -112,41 +133,76 @@ const PreviewMint: React.FC = () => {
     }
   };
 
+  const _handleTokenProcessRequest = async () => {
+    await processTokenRequests(provider);
+  };
+
+  const debounced = useDebouncedCallback((cb: () => void) => cb(), 500);
+
   React.useEffect(() => {
     const _load = async () => {
-      if (!state.block) return;
+      try {
+        if (!state.block) return;
 
-      const refBlock = await getBlock(
-        new BN(state.block).sub(new BN(32)).toNumber()
-      );
-
-      const parentBlockNumber = toBN(state.block).sub(toBN(1));
-
-      const past = new BN(refBlock.number);
-      const future = new BN(state.block);
-
-      const diff = future.sub(past).mul(new BN(3));
-      const result = new BN(refBlock.timestamp).add(diff);
-
-      let parentBlockHash: BN;
-
-      if (state.isPastMint) {
-        parentBlockHash = bytes32ToBN(
-          await calculateBlockHash(parentBlockNumber)
+        const refBlock = await getBlock(
+          new BN(state.block).sub(new BN(256)).toNumber()
         );
-      } else {
-        parentBlockHash = bytes32ToBN(await getBlockHash(parentBlockNumber));
-      }
 
-      updateState("blockTimestamp", result.toString());
-      updateState("parentBlockHash", parentBlockHash.toString());
+        if (!refBlock) {
+          throw new Error("This block is too far in the future");
+        }
+
+        const parentBlockNumber = toBN(state.block).sub(toBN(1));
+
+        const past = new BN(refBlock.number);
+        const future = new BN(state.block);
+
+        const diff = future.sub(past).mul(new BN(3));
+        const result = new BN(refBlock.timestamp).add(diff);
+
+        let parentBlockHash: BN;
+
+        if (state.isPastMint) {
+          parentBlockHash = bytes32ToBN(
+            await calculateBlockHash(parentBlockNumber)
+          );
+        } else {
+          parentBlockHash = bytes32ToBN(await getBlockHash(parentBlockNumber));
+        }
+
+        if (parentBlockHash.isZero()) {
+          throw new Error("Parent block hash is zero, this is going to fail.");
+        }
+
+        debounced(() => {
+          updateState("blockTimestamp", result.toString());
+          updateState("parentBlockHash", parentBlockHash.toString());
+        });
+
+        setError("");
+      } catch (e: any) {
+        setError(e.message);
+      }
     };
 
     _load();
   }, [state.block]);
 
+  const _handleConnectWalletOnClick = async () => {
+    if (!isActive) {
+      await connect();
+      return;
+    } else {
+      disconnect();
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6 h-min md:w-3/4">
+      <Button disabled={isLoading} onClick={_handleConnectWalletOnClick}>
+        {!isActive ? "Connect metamask" : "Disconnect"}
+      </Button>
+
       <Box className="flex flex-col gap-6">
         {error && <Alert type="error" message={error} />}
 
@@ -160,14 +216,19 @@ const PreviewMint: React.FC = () => {
             placeholder="Amount"
           />
 
-          <Input
-            id={"targetBlock"}
-            className="md:w-1/2"
-            value={state.targetBlock}
-            onChange={_handleChange("targetBlock")}
-            primary="Request target block"
-            placeholder="Block number when called mint()"
-          />
+          <div className="flex flex-col lg:w-1/6 lg:flex-1">
+            <Input
+              id={"targetBlock"}
+              value={state.targetBlock}
+              onChange={_handleChange("targetBlock")}
+              primary="Request target block"
+              placeholder="Block number when called mint()"
+            />
+
+            <Button onClick={_handleGetLastBlockNumberOnClick("targetBlock")}>
+              Get last block number
+            </Button>
+          </div>
 
           <div className="flex flex-col lg:w-1/6 lg:flex-1">
             <Input
@@ -195,19 +256,54 @@ const PreviewMint: React.FC = () => {
             placeholder="Block number when called processTokenRequest()"
           />
 
-          <Button onClick={_handleGetLastBlockNumberOnClick} className="w-full">
-            Get last block number
-          </Button>
+          <div className="flex gap-4">
+            <Button
+              onClick={_handleGetLastBlockNumberOnClick("block")}
+              className="w-full"
+            >
+              Get last block number
+            </Button>
+
+            <Button
+              onClick={() => {
+                updateState("block", Number(+state.block + 1).toString());
+                _handleMintOnClick();
+              }}
+              className="w-full"
+            >
+              +1
+            </Button>
+
+            <Button
+              onClick={() => {
+                updateState("block", Number(+state.block + 5).toString());
+                _handleMintOnClick();
+              }}
+              className="w-full"
+            >
+              +5
+            </Button>
+          </div>
         </div>
 
-        <div className="flex flex-col flex-1">
+        <div className="flex flex-col flex-1 gap-2">
           <Checkbox
             checked={state.isPastMint}
             onChange={_handleOnPastCheck}
             label="Does this happened in the past?"
           />
 
+          <Checkbox
+            checked={state.shouldMint}
+            onChange={_handleOnShouldMintCheck}
+            label="Should mint?"
+          />
+
           <Button onClick={_handleMintOnClick}>Mint</Button>
+
+          <Button onClick={_handleTokenProcessRequest}>
+            Process token request
+          </Button>
         </div>
       </Box>
 

@@ -23,8 +23,8 @@ const HeroFinder: React.FC = () => {
   const [heroes, setHeroes] = useState<Hero[] | undefined>();
   const [error, setError] = useState<string>("");
 
-  const _handleAccountChange = (event: React.FormEvent<HTMLInputElement>) => {
-    setAddress(event.currentTarget.value);
+  const _handleAccountChange = (value: string) => {
+    setAddress(value);
   };
 
   const _handleFetchNFTS = async (e: React.FormEvent<HTMLButtonElement>) => {

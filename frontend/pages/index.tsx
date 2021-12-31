@@ -6,16 +6,8 @@ import React from "react";
 import Head from "next/head";
 import Skeleton from "../src/shared/components/Skeleton";
 import Body from "../src/shared/components/Body";
-import { Web3ReactProvider } from "@web3-react/core";
-import { MetaMaskProvider } from "../src/shared/hooks/use-metamask";
 
-import Web3 from "web3";
-
-function getLibrary(provider: any) {
-  return new Web3(provider);
-}
-
-function HomeApp() {
+export default function Home() {
   return (
     <Body>
       <Head>
@@ -25,15 +17,5 @@ function HomeApp() {
 
       <Skeleton />
     </Body>
-  );
-}
-
-export default function Home() {
-  return (
-    <Web3ReactProvider getLibrary={getLibrary}>
-      <MetaMaskProvider>
-        <HomeApp />
-      </MetaMaskProvider>
-    </Web3ReactProvider>
   );
 }

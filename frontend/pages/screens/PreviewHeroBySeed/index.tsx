@@ -21,8 +21,8 @@ const PreviewHeroBySeed: React.FC = ({}) => {
 
   const [hero, setHero] = useState<Hero>();
 
-  const _handleSeedOnChange = (e: React.FormEvent<HTMLInputElement>) => {
-    setSeed(e.currentTarget.value);
+  const _handleSeedOnChange = (value: string) => {
+    setSeed(value);
   };
 
   const _handleDecodeHero = async () => {

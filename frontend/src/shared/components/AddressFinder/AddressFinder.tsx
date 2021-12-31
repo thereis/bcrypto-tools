@@ -24,8 +24,8 @@ const AddressFinder: React.FC<Props> = ({
   const [isFetching, setIsFetching] = useState(false);
   const [error, setError] = useState<string>("");
 
-  const _handleChangeNftId = (event: React.FormEvent<HTMLInputElement>) => {
-    setNftId(event.currentTarget.value);
+  const _handleChangeNftId = (value: string) => {
+    setNftId(value);
   };
 
   const _handleGetAccountByNft = async () => {

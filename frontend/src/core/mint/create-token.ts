@@ -42,19 +42,8 @@ export const createToken = ({
   for (let i = 0; i < count; i++) {
     const tokenSeed = toBN(encrypt([seed.toString(), tokenId.toString()]));
 
-    console.log({
-      tokenId: tokenId.toString(),
-      tokenSeed: tokenSeed.toString(),
-    });
-
     const utils = new Random(timestamp, parentBlockHash);
     const result = utils.randomByWeights(tokenSeed);
-
-    if (rarity === BHeroDetails.ALL_RARITY) {
-      console.log(`Seed rarity: ${result.index}`);
-    } else {
-      console.log("Rarity is common!");
-    }
 
     const stats = rarityStats[result.index];
 
