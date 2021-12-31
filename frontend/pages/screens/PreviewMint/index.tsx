@@ -87,6 +87,8 @@ const PreviewMint: React.FC = () => {
     const lastTokenId = await getLastTokenId();
 
     updateState("tokenId", lastTokenId.toString());
+
+    _handleMintOnClick();
   };
 
   const _handleGetLastBlockNumberOnClick = (key: keyof State) => async () => {
@@ -135,6 +137,13 @@ const PreviewMint: React.FC = () => {
 
   const _handleTokenProcessRequest = async () => {
     await processTokenRequests(provider);
+  };
+
+  const _handleUpdateBlockIdAndToken = async () => {
+    await Promise.all([
+      _handleGetLastTokenIdOnClick(),
+      _handleGetLastBlockNumberOnClick("block")(),
+    ]);
   };
 
   const debounced = useDebouncedCallback((cb: () => void) => cb(), 500);
@@ -300,6 +309,10 @@ const PreviewMint: React.FC = () => {
           />
 
           <Button onClick={_handleMintOnClick}>Mint</Button>
+
+          <Button onClick={_handleUpdateBlockIdAndToken}>
+            Update last token id and block number
+          </Button>
 
           <Button onClick={_handleTokenProcessRequest}>
             Process token request
