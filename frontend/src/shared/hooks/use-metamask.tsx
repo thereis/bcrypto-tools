@@ -56,24 +56,31 @@ export const MetaMaskProvider: React.FC = ({ children }) => {
 
   // Connect to MetaMask wallet
   const connect = async () => {
-    console.log("Connecting to MetaMask...");
-    setShouldDisable(true);
     try {
+      setIsLoading(true);
+
+      console.log("Connecting to MetaMask...");
+      setShouldDisable(true);
       await activate(injected).then(() => {
         setShouldDisable(false);
       });
     } catch (error) {
       console.log("Error on connecting: ", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Disconnect from Metamask wallet
   const disconnect = async () => {
-    console.log("Disconnecting wallet from App...");
     try {
+      setIsLoading(true);
+      console.log("Disconnecting wallet from App...");
       await deactivate();
     } catch (error) {
       console.log("Error on disconnnect: ", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 

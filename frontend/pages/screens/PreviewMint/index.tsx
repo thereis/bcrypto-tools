@@ -193,7 +193,7 @@ const PreviewMint: React.FC = () => {
       await connect();
       return;
     } else {
-      disconnect();
+      await disconnect();
     }
   };
 
