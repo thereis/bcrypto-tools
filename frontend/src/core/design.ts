@@ -38,3 +38,6 @@ export const getTokenLimit = async () => {
 export const getMintCost = async () => {
   return await designContract.methods.getMintCost().call();
 };
+
+export const createRandomToken = async (seed: BN, heroId: BN, rarity: BN) =>
+  await designContract.methods.createRandomToken(seed, heroId, rarity).call();

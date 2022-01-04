@@ -41,13 +41,14 @@ type State = {
   tokenId: string;
   isPastMint: boolean;
   shouldMint: boolean;
+  executeFromContract: boolean;
 };
 
 const PreviewMint: React.FC = () => {
   const { connect, provider, isActive, isLoading, disconnect } = useMetaMask();
 
   const [state, setState] = useState<State>({
-    amount: "", // Amount of heroes to mint
+    amount: "5", // Amount of heroes to mint
     block: "", // Current block number
     blockTimestamp: "", // Current block timestamp
     parentBlockHash: "", // Parent block hash
@@ -55,6 +56,7 @@ const PreviewMint: React.FC = () => {
     tokenId: "", // Global token ID
     isPastMint: false,
     shouldMint: false,
+    executeFromContract: false,
   });
 
   const [heroes, setHeroes] = useState<Hero[]>();
@@ -71,17 +73,10 @@ const PreviewMint: React.FC = () => {
     updateState(key, value);
   };
 
-  const _handleOnPastCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { checked } = e.currentTarget;
-
-    updateState("isPastMint", checked);
-  };
-
-  const _handleOnShouldMintCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { checked } = e.currentTarget;
-
-    updateState("shouldMint", checked);
-  };
+  const _handleOnCheckChange =
+    (key: keyof State) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      updateState(key, e.target.checked);
+    };
 
   const _handleGetLastTokenIdOnClick = async () => {
     const lastTokenId = await getLastTokenId();
@@ -119,6 +114,7 @@ const PreviewMint: React.FC = () => {
         parentBlockHash: state.parentBlockHash,
         blockTimeStamp,
         isPast: state.isPastMint,
+        executeFromContract: state.executeFromContract,
       });
 
       setHeroes(result);
@@ -298,14 +294,20 @@ const PreviewMint: React.FC = () => {
         <div className="flex flex-col flex-1 gap-2">
           <Checkbox
             checked={state.isPastMint}
-            onChange={_handleOnPastCheck}
+            onChange={_handleOnCheckChange("isPastMint")}
             label="Does this happened in the past?"
           />
 
           <Checkbox
             checked={state.shouldMint}
-            onChange={_handleOnShouldMintCheck}
+            onChange={_handleOnCheckChange("shouldMint")}
             label="Should mint?"
+          />
+
+          <Checkbox
+            checked={state.executeFromContract}
+            onChange={_handleOnCheckChange("executeFromContract")}
+            label="Should execute the mint from the contract rather than the algorithm?"
           />
 
           <Button onClick={_handleMintOnClick}>Mint</Button>

@@ -15,6 +15,7 @@ type Params = {
   count: number;
 
   isPast?: boolean;
+  executeFromContract: boolean;
 };
 
 export const mint = async ({
@@ -25,6 +26,7 @@ export const mint = async ({
   startTokenId,
   count,
   isPast = false,
+  executeFromContract,
 }: Params) => {
   const request = requestCreateToken({
     targetBlock: targetBlock.toString(),
@@ -39,14 +41,15 @@ export const mint = async ({
     isPast,
   });
 
-  const { results } = createToken({
+  const { heroes } = await createToken({
     seed,
     rarity,
     count,
     timestamp: blockTimeStamp.toString(),
     parentBlockHash,
     startTokenId,
+    executeFromContract: false,
   });
 
-  return results;
+  return heroes;
 };
